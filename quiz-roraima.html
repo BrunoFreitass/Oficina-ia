@@ -212,7 +212,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
 
   function finish(){
     const id = Date.now()+''+Math.random();
-    memory.push({id, n:player, p:total}); save(memory);
+    memory.push({id, n:player, p:total}); memory = memory.sort((a,b)=>b.p-a.p).slice(0,50); save(memory);
     $('end-name').textContent = player;
     $('end-score').textContent = total + ' pts';
     $('end-detail').textContent = `Você acertou ${hits} de ${QS.length} perguntas.`;
