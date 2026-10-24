@@ -48,7 +48,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .algo .empty{color:var(--muted);font-family:var(--display);font-style:italic}
 
 /* Rio */
-.river{display:grid;grid-template-columns:1fr 1.3fr 1fr;border-radius:14px;overflow:hidden;min-height:300px}
+.river{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) minmax(0,1fr);border-radius:14px;overflow:hidden;min-height:300px}
 .bank{background:linear-gradient(var(--bank-2),var(--bank));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px 8px}
 .bank h3{margin:0;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .water{background:repeating-linear-gradient(135deg,var(--river) 0 22px,var(--river-2) 22px 44px);display:flex;align-items:center;padding:12px;position:relative}
@@ -59,7 +59,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .piece small{font-size:13px;font-family:var(--display);color:var(--fg);font-weight:600}
 .piece.clickable:hover{border-color:var(--warn)}
 .piece.static{cursor:default}
-@media (max-width:600px){.piece{font-size:32px}.river{min-height:220px}}
+@media (max-width:600px){.piece{font-size:32px}.river{min-height:220px}.bank h3{font-size:11px;letter-spacing:.02em;text-align:center}}
 
 /* Hanói */
 .towers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;min-height:300px}
@@ -151,8 +151,8 @@ button:disabled{opacity:.4;cursor:not-allowed}
   }
 
   /* ---------- RIO ---------- */
-  const ITEMS = {raposa:{e:'🦊',n:'Raposa'}, galinha:{e:'🐔',n:'Galinha'}, milho:{e:'🌽',n:'Milho'}};
-  let rio, rioHist, rioLog, rioOver;
+  const ITEMS = {raposa:{e:'🦊',n:'Raposa',art:'a'}, galinha:{e:'🐔',n:'Galinha',art:'a'}, milho:{e:'🌽',n:'Milho',art:'o'}};
+  let rio, rioHist, rioLog, rioOver, rioAuto=false;
   function rioInit(){ rio = {side:'L', pos:{raposa:'L',galinha:'L',milho:'L'}, cargo:null}; rioHist=[]; rioLog=[]; rioOver=false; setStatus('rio',''); rioDraw(); }
   function piece(key, clickable){
     const b = document.createElement(clickable?'button':'div');
@@ -169,17 +169,18 @@ button:disabled{opacity:.4;cursor:not-allowed}
     const R = document.createElement('div'); R.className='bank'; R.innerHTML='<h3>Margem direita</h3>';
     const boat = document.createElement('div'); boat.className='boat ' + (rio.side==='L'?'left':'right');
     boat.appendChild(farmer());
-    if (rio.cargo) boat.appendChild(piece(rio.cargo, !rioOver));
+    if (rio.cargo) boat.appendChild(piece(rio.cargo, !rioOver && !rioAuto));
     W.appendChild(boat);
     for (const k in ITEMS){
       if (k===rio.cargo) continue;
       const bank = rio.pos[k]==='L'?L:R;
-      bank.appendChild(piece(k, !rioOver && rio.pos[k]===rio.side));
+      bank.appendChild(piece(k, !rioOver && !rioAuto && rio.pos[k]===rio.side));
     }
     r.append(L,W,R);
     $('rio-count').textContent = rioHist.length + (rioHist.length===1?' travessia':' travessias');
     renderLog($('rio-log'), rioLog);
-    $('rio-go').disabled = rioOver; $('rio-undo').disabled = !rioHist.length;
+    $('rio-go').disabled = rioOver || rioAuto; $('rio-undo').disabled = rioAuto || !rioHist.length;
+    $('rio-reset').disabled = rioAuto; $('rio-sol').disabled = rioAuto;
   }
   function rioToggle(k){
     if (rio.cargo===k) rio.cargo=null;
@@ -192,7 +193,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
     rioHist.push(JSON.stringify(rio));
     const from = rio.side, to = from==='L'?'R':'L';
     const dir = to==='R'?'para a direita':'de volta para a esquerda';
-    if (rio.cargo){ rio.pos[rio.cargo]=to; rioLog.push({text:`Levar a ${ITEMS[rio.cargo].n.toLowerCase()} ${dir}`}); }
+    if (rio.cargo){ rio.pos[rio.cargo]=to; rioLog.push({text:`Levar ${ITEMS[rio.cargo].art} ${ITEMS[rio.cargo].n.toLowerCase()} ${dir}`}); }
     else rioLog.push({text:`Atravessar sozinho ${dir}`});
     rio.cargo=null; rio.side=to;
     // checar a margem que ficou sem o fazendeiro
@@ -208,8 +209,8 @@ button:disabled{opacity:.4;cursor:not-allowed}
   function rioSolution(){
     rioInit();
     const steps=['galinha',null,'raposa','galinha','milho',null,'galinha'];
-    let i=0; $('rio-sol').disabled=true;
-    const tick=()=>{ if(i>=steps.length){ $('rio-sol').disabled=false; return; } rio.cargo=steps[i++]; rioCross(); setTimeout(tick, 900); };
+    let i=0; rioAuto=true;
+    const tick=()=>{ if(i>=steps.length){ rioAuto=false; rioDraw(); return; } rio.cargo=steps[i++]; rioCross(); setTimeout(tick, 900); };
     tick();
   }
   $('rio-go').onclick = rioCross; $('rio-undo').onclick = rioUndo; $('rio-reset').onclick = rioInit; $('rio-sol').onclick = rioSolution;

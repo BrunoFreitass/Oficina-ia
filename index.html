@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>IA para Estudar · Oficina</title>
-<meta name="description" content="Oficina IA como ferramenta de aprendizado para estudantes — prompts prontos, materiais para o NotebookLM e desafios de algoritmo.">
+<title>Vibe Coding e IA para Estudar</title>
+<meta name="description" content="Oficina de vibe coding e ferramentas de IA do Google para estudar e criar: desafios de algoritmo, materiais para o NotebookLM, comandos prontos para o Gemini Canvas e um quiz de Roraima com ranking.">
 <link rel="icon" href="img/gemini.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
 <style>
-/* Layout: página única escura, como o template dos Embaixadores; hero com ilustrações 3D, roteiro em 4 etapas, cada etapa com ação prática (baixar, copiar, abrir). */
+/* Layout: página única escura, como o template dos Embaixadores; hero com ilustrações 3D, roteiro em 5 etapas, cada etapa com ação prática (baixar, copiar, abrir). */
 :root{
   --bg:#0b0d12; --surface:#14171f; --surface-2:#1b1f2a; --line:#2a2f3c; --fg:#f2f4f8; --muted:#a3abbb;
   --blue:#4285F4; --red:#EA4335; --yellow:#FBBC04; --green:#34A853;
@@ -70,8 +70,9 @@ h3{font-size:21px;margin:0 0 8px}
 @media (max-width:560px){.sec-head img{width:60px;height:60px}}
 
 /* roadmap */
-.road{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
-@media (max-width:900px){.road{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.road{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+@media (max-width:1000px){.road{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:700px){.road{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:520px){.road{grid-template-columns:1fr}}
 .step{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px;text-decoration:none;color:var(--fg);display:grid;gap:6px;align-content:start}
 .step:hover{border-color:var(--c)}
@@ -154,13 +155,14 @@ footer .who b{color:var(--fg);font-size:18px}
 
 <nav aria-label="Seções">
   <div class="wrap">
-    <a class="brand" href="#inicio"><img src="img/gemini.png" alt="">IA para Estudar</a>
+    <a class="brand" href="#inicio"><img src="img/gemini.png" alt="">Oficina de Vibe Coding</a>
     <div class="links">
       <a href="#roteiro">Roteiro</a>
       <a href="#algoritmo">1. Algoritmo</a>
       <a href="#notebooklm">2. NotebookLM</a>
       <a href="#canvas">3. Canvas</a>
       <a href="#responsavel">4. Uso responsável</a>
+      <a href="#quiz">5. Quiz</a>
       <a href="#bonus">Bônus</a>
     </div>
   </div>
@@ -169,10 +171,11 @@ footer .who b{color:var(--fg);font-size:18px}
 <header id="inicio" class="wrap hero">
   <div>
     <span class="pill"><img src="img/g.png" alt="">Embaixadores Estudantis do Google · Oficina</span>
-    <h1>IA como ferramenta de <span class="g">aprendizado</span> para estudantes</h1>
-    <p class="lede">Tudo o que você precisa para a oficina em um só lugar: os desafios de lógica, os materiais para estudar no NotebookLM e os comandos prontos para criar seu painel de estudos no Gemini.</p>
+    <h1>Vibe coding e ferramentas de IA do Google para <span class="g">estudar e criar</span></h1>
+    <p class="lede">Tudo o que você precisa para a oficina em um só lugar: os desafios de lógica, os materiais para estudar no NotebookLM e os comandos prontos para criar seu painel de estudos e seu quiz de Roraima no Gemini.</p>
     <div class="meta">
       <span><b>SEMEI 2026 + IF Comunidade</b></span>
+      <span>Terça, 27/10 · 8h às 10h</span>
       <span>IFRR · Campus Boa Vista Zona Oeste</span>
       <span>Laboratório de Informática 1</span>
     </div>
@@ -194,13 +197,14 @@ footer .who b{color:var(--fg);font-size:18px}
 <section id="roteiro">
   <div class="wrap">
     <div class="eyebrow">Roteiro da oficina</div>
-    <h2>Quatro etapas, da lógica ao seu painel de estudos</h2>
-    <p class="intro">Primeiro você entende como dar boas instruções. Depois usa a IA para organizar o estudo e, por fim, cria uma ferramenta de estudo sua.</p>
+    <h2>Cinco etapas, da lógica ao seu próprio jogo</h2>
+    <p class="intro">Primeiro você entende como dar boas instruções. Depois usa a IA para organizar o estudo, cria sua ferramenta de estudo e, no final, programa um jogo de perguntas com ranking, só conversando com a IA.</p>
     <div class="road">
       <a class="step" href="#algoritmo" style="--c:var(--blue)"><span class="n">ETAPA 1</span><strong>Algoritmo</strong><span>Torre de Hanói, travessia do rio e a receita de bolo.</span></a>
       <a class="step" href="#notebooklm" style="--c:var(--red)"><span class="n">ETAPA 2</span><strong>NotebookLM</strong><span>Um caderno de estudos que responde só com base nas suas fontes.</span></a>
       <a class="step" href="#canvas" style="--c:var(--yellow)"><span class="n">ETAPA 3</span><strong>Gemini Canvas</strong><span>Crie seu painel de estudos com metas, checklist e tempo de estudo.</span></a>
       <a class="step" href="#responsavel" style="--c:var(--green)"><span class="n">ETAPA 4</span><strong>Uso responsável</strong><span>Como usar IA para aprender, e não para colar.</span></a>
+      <a class="step" href="#quiz" style="--c:var(--red)"><span class="n">ETAPA 5</span><strong>Quiz de Roraima</strong><span>Vibe coding: crie um jogo de perguntas com ranking e desafie os colegas.</span></a>
     </div>
   </div>
 </section>
@@ -367,6 +371,84 @@ footer .who b{color:var(--fg);font-size:18px}
   </div>
 </section>
 
+
+<!-- ETAPA 5 -->
+<section id="quiz" style="--c:var(--red)">
+  <div class="wrap">
+    <div class="sec-head"><img src="img/balao.png" alt=""><div><div class="eyebrow">Etapa 5 · Vibe coding</div><h2>Crie seu quiz de Roraima com ranking</h2></div></div>
+    <p class="intro">Agora você vai programar um jogo de perguntas e respostas com tempo, pontos e ranking, como os jogos de auditório, sem escrever uma linha de código. Você descreve o jogo, e a IA programa.</p>
+
+    <div class="grid2" style="margin-bottom:22px">
+      <div class="card">
+        <h3>Veja onde você vai chegar</h3>
+        <p class="muted">Este é um exemplo feito com IA. Jogue uma vez para entender a ideia e depois crie o seu, do seu jeito.</p>
+        <p style="margin-top:14px"><a class="btn primary" href="quiz-roraima.html">Jogar o exemplo</a></p>
+      </div>
+      <div class="callout">
+        <p style="margin-top:0"><b>Como funciona o ranking:</b> o placar fica salvo no computador em que o quiz está aberto. Joguem em dupla, um de cada vez. No final, troquem de computador e tentem bater o recorde do quiz do colega.</p>
+        <p style="margin-bottom:0"><b>Confira as respostas:</b> a IA pode errar fatos sobre Roraima. Se achar um erro, peça a correção. Isso também é vibe coding.</p>
+      </div>
+    </div>
+
+    <div class="builder">
+      <form id="qbuilder" class="card" onsubmit="return false">
+        <fieldset>
+          <legend>O jogo</legend>
+          <div class="f"><label for="q-tema">Tema</label>
+            <input type="text" id="q-tema" value="Roraima"></div>
+          <div class="f"><label for="q-assuntos">Assuntos das perguntas</label>
+            <input type="text" id="q-assuntos" value="geografia, história, cultura, natureza e curiosidades"></div>
+          <div class="f"><label for="q-n">Número de perguntas</label>
+            <select id="q-n"><option>5</option><option selected>10</option><option>15</option></select></div>
+          <div class="f"><label for="q-t">Segundos por pergunta</label>
+            <select id="q-t"><option>10</option><option selected>15</option><option>20</option><option>30</option></select></div>
+        </fieldset>
+        <fieldset>
+          <legend>Regras e recursos</legend>
+          <div class="checks">
+            <label><input type="checkbox" id="q-rapidez" checked> Quem responde mais rápido ganha mais pontos</label>
+            <label><input type="checkbox" id="q-rank" checked> Ranking com os 10 melhores, salvo no navegador</label>
+            <label><input type="checkbox" id="q-explica" checked> Explicação curta depois de cada resposta</label>
+            <label><input type="checkbox" id="q-embaralha" checked> Perguntas e alternativas em ordem aleatória</label>
+            <label><input type="checkbox" id="q-sequencia"> Bônus para quem acertar várias seguidas</label>
+          </div>
+        </fieldset>
+        <div class="f"><label for="q-estilo">Estilo visual</label>
+          <select id="q-estilo">
+            <option value="de jogo de auditório: fundo escuro, alternativas em botões grandes e coloridos (vermelho, azul, amarelo e verde) e uma barra de tempo">Jogo de auditório</option>
+            <option value="inspirado na natureza de Roraima, com tons de verde, azul do rio e laranja do pôr do sol">Natureza de Roraima</option>
+            <option value="retrô de videogame, com fonte pixelada e cores neon">Videogame retrô</option>
+            <option value="claro e minimalista">Claro e minimalista</option>
+          </select></div>
+      </form>
+
+      <div style="display:grid;gap:14px;min-width:0">
+        <div class="prompt">
+          <label for="q-out">Seu comando para o Canvas</label>
+          <textarea id="q-out" style="min-height:360px"></textarea>
+          <div class="row">
+            <button class="btn primary small" type="button" data-copy="q-out">Copiar comando</button>
+            <a class="btn small" href="https://gemini.google.com/app" target="_blank" rel="noopener">Abrir o Gemini</a>
+            <span class="ok" role="status"></span>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Como usar</h3>
+          <ol class="steps">
+            <li>Copie o comando e abra o Gemini.</li>
+            <li>Clique em <b>Ferramentas</b> (ou no <b>+</b>) e escolha <b>Canvas</b>.</li>
+            <li>Cole, envie e jogue uma partida para testar.</li>
+            <li>Peça ajustes e depois desafie o colega do lado.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:30px">Ajustes para deixar o jogo com a sua cara</h3>
+    <div class="grid3" id="quiz-followups"></div>
+  </div>
+</section>
+
 <!-- BÔNUS -->
 <section id="bonus" style="--c:var(--blue)">
   <div class="wrap">
@@ -518,6 +600,43 @@ Use um visual ${$('#b-estilo').value}, com uma cor diferente para cada matéria,
   $('#canvas-followups').innerHTML = FOLLOW.map((t,i)=>`
     <div class="prompt"><textarea id="fu-${i}" style="min-height:92px">${t}</textarea>
       <div class="row"><button class="btn small" type="button" data-copy="fu-${i}">Copiar</button><span class="ok" role="status"></span></div></div>`).join('');
+
+
+  /* ---------- construtor do quiz ---------- */
+  let qEdited=false;
+  function qBuild(){
+    const tema=$('#q-tema').value.trim()||'Roraima', ass=$('#q-assuntos').value.trim(), n=$('#q-n').value, t=$('#q-t').value;
+    const regras=[`- ${n} perguntas de múltipla escolha com 4 alternativas cada, sobre ${ass || 'o tema'}.`,
+      `- ${t} segundos para responder cada pergunta, com uma barra de tempo diminuindo.`];
+    if($('#q-rapidez').checked) regras.push('- Resposta certa vale de 500 a 1000 pontos: quanto mais rápido, mais pontos. Resposta errada ou fora do tempo vale 0.');
+    if($('#q-sequencia').checked) regras.push('- Bônus de 200 pontos a cada 3 acertos seguidos.');
+    if($('#q-explica').checked) regras.push('- Depois de cada resposta, mostrar se acertou e uma explicação curta sobre a resposta certa.');
+    if($('#q-embaralha').checked) regras.push('- Perguntas e alternativas em ordem aleatória a cada partida.');
+    regras.push('- Uma tela inicial onde o jogador digita o nome antes de começar.');
+    if($('#q-rank').checked) regras.push('- No final, mostrar a pontuação e um ranking com os 10 melhores jogadores, salvo no navegador, com um botão "Próximo jogador" para outra pessoa jogar no mesmo computador.');
+    return `Crie um jogo de quiz sobre ${tema} em uma única página web, para estudantes do ensino médio jogarem em sala de aula.
+
+Regras do jogo:
+${regras.join('\n')}
+
+Use informações corretas e verificáveis sobre ${tema}. Use um visual ${$('#q-estilo').value}, que funcione bem no celular e no computador. Escreva todos os textos em português.`;
+  }
+  function qRefresh(){ if(!qEdited) $('#q-out').value=qBuild(); }
+  $('#qbuilder').addEventListener('input',()=>{qEdited=false;qRefresh();});
+  $('#qbuilder').addEventListener('change',()=>{qEdited=false;qRefresh();});
+  $('#q-out').addEventListener('input',()=>qEdited=true);
+  qRefresh();
+  const QFOLLOW=[
+    'Adicione sons curtos para acerto e erro, com um botão para desligar o som.',
+    'Mostre uma animação de confete quando o jogador terminar em 1º lugar no ranking.',
+    'Crie um modo difícil com 10 perguntas novas e mais difíceis.',
+    'Adicione uma imagem ou um ícone relacionado a cada pergunta.',
+    'Mostre no final quais perguntas o jogador errou, com a resposta certa.',
+    'Confira se todas as respostas estão corretas e corrija o que estiver errado.'
+  ];
+  $('#quiz-followups').innerHTML = QFOLLOW.map((t,i)=>`
+    <div class="prompt"><textarea id="qfu-${i}" style="min-height:92px">${t}</textarea>
+      <div class="row"><button class="btn small" type="button" data-copy="qfu-${i}">Copiar</button><span class="ok" role="status"></span></div></div>`).join('');
 
   /* ---------- Aprendizado guiado ---------- */
   const GL = 'https://gemini.google.com/guided-learning?query=';

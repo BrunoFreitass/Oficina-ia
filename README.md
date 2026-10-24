@@ -1,9 +1,10 @@
-# IA como ferramenta de aprendizado para estudantes
+# Oficina de vibe coding e ferramentas de IA do Google para estudar e criar
 
 Página de apoio da oficina ministrada por **Bruno Freitas**, Embaixador Estudantil do Google, na SEMEI 2026 + IF Comunidade (IFRR, Campus Boa Vista Zona Oeste).
 
 - `index.html`: página principal (roteiro, materiais, comandos prontos e bônus)
 - `desafios.html`: Torre de Hanói e travessia do rio
+- `quiz-roraima.html`: exemplo de quiz com ranking feito com vibe coding
 - `materiais/`: textos de estudo em PDF para usar no NotebookLM
 - `apresentacao.pdf`: slides da oficina
 
