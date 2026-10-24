@@ -641,7 +641,9 @@ footer .who b{color:var(--fg);font-size:18px}
     const resumo = f==='resumo' ? `\n\n--- MEU RESUMO ---\n${$('#b-resumo').value.trim() || '[COLE SEU RESUMO AQUI]'}\n--- FIM DO RESUMO ---` : '';
     const feats = [];
     if ($('#o-area').checked) feats.push('- Para cada assunto, crie uma área de estudo com três abas: Estudar (um resumo claro com exemplos), Flashcards (de 8 a 10 cartões de pergunta e resposta que viram ao clicar) e Mini-teste (5 questões de múltipla escolha com correção e explicação).');
-    if ($('#o-check').checked) feats.push('- Uma lista de desafios para cada assunto, ligados à área de estudo (ler o resumo, revisar todos os flashcards, acertar pelo menos 4 de 5 no mini-teste), com caixas para marcar como concluído. Marque automaticamente o desafio do mini-teste quando o aluno atingir a nota.');
+    if ($('#o-check').checked) feats.push($('#o-area').checked
+      ? '- Uma lista de desafios para cada assunto, ligados à área de estudo (ler o resumo, revisar todos os flashcards, acertar pelo menos 4 de 5 no mini-teste), com caixas para marcar como concluído. Marque automaticamente o desafio do mini-teste quando o aluno atingir a nota.'
+      : '- Uma lista de desafios para cada assunto, com caixas de seleção para marcar como concluído.');
     if ($('#o-timer').checked) feats.push('- Um cronômetro no método Pomodoro (25 minutos de foco e 5 de pausa), em que eu escolho a matéria antes de começar, e que soma o tempo estudado em cada matéria.');
     if ($('#o-info').checked) feats.push('- Infográficos mostrando o progresso de cada matéria (porcentagem de desafios concluídos) e o tempo total estudado.');
     if ($('#o-meta').checked) feats.push(`- Uma meta diária de ${tempo} minutos de estudo, com barra de progresso.`);
