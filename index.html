@@ -112,6 +112,12 @@ table.recipe th{color:var(--muted);font-weight:600;font-size:14px}
 .tool{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
 .tool b{display:block;margin-bottom:2px}
 .tool span{color:var(--muted);font-size:15px}
+.tool .where{display:block;margin-top:6px;font-size:14px;color:var(--muted)}
+.tool a.where{color:#8ab4ff}
+
+/* banco de prompts */
+.ptop{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;justify-content:space-between}
+.tag{font-family:var(--mono);font-size:13px;color:var(--c);border:1px solid var(--c);border-radius:999px;padding:2px 10px;white-space:nowrap}
 
 /* prompts */
 .prompt{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:10px;min-width:0}
@@ -163,6 +169,7 @@ footer .who b{color:var(--fg);font-size:18px}
       <a href="#canvas">3. Canvas</a>
       <a href="#responsavel">4. Uso responsável</a>
       <a href="#quiz">5. Quiz</a>
+      <a href="#prompts">Prompts</a>
       <a href="#bonus">Bônus</a>
     </div>
   </div>
@@ -183,6 +190,7 @@ footer .who b{color:var(--fg);font-size:18px}
       <a class="btn primary" href="https://gemini.google.com/app" target="_blank" rel="noopener">Abrir o Gemini</a>
       <a class="btn" href="https://notebooklm.google.com/" target="_blank" rel="noopener">Abrir o NotebookLM</a>
       <a class="btn" href="apresentacao.pdf" target="_blank" rel="noopener">Apresentação (PDF)</a>
+      <a class="btn" href="#prompts">Banco de prompts</a>
     </div>
   </div>
   <div class="art" aria-hidden="true">
@@ -449,6 +457,38 @@ footer .who b{color:var(--fg);font-size:18px}
   </div>
 </section>
 
+<!-- BANCO DE PROMPTS -->
+<section id="prompts" style="--c:var(--green)">
+  <div class="wrap">
+    <div class="sec-head"><img src="img/cerebro.png" alt=""><div><div class="eyebrow">Para usar depois da oficina</div><h2>Banco de prompts para estudar</h2></div></div>
+    <p class="intro">Escolha a matéria e o assunto uma vez. Os seis prompts abaixo se ajustam sozinhos. Edite o que quiser, copie e abra a ferramenta indicada.</p>
+
+    <form id="pbuilder" class="card grid3" onsubmit="return false" style="margin-bottom:16px">
+      <div class="f"><label for="pb-materia">Matéria</label>
+        <input type="text" id="pb-materia" value="Biologia"></div>
+      <div class="f"><label for="pb-assunto">Assunto</label>
+        <input type="text" id="pb-assunto" value="fotossíntese"></div>
+      <div class="f"><label for="pb-ano">Ano</label>
+        <select id="pb-ano"><option>1º ano</option><option>2º ano</option><option>3º ano</option></select></div>
+    </form>
+
+    <div class="grid3" id="pb-cards" style="margin-bottom:30px"></div>
+
+    <h3>Ferramentas que funcionam no navegador</h3>
+    <div class="tools" style="margin:12px 0">
+      <div class="tool"><b>Gemini</b><span>Explicar matérias, revisar textos e tirar dúvidas.</span><a class="where" href="https://gemini.google.com/app" target="_blank" rel="noopener">gemini.google.com</a></div>
+      <div class="tool"><b>Gemini Canvas</b><span>Criar apps, quizzes e páginas por vibe coding.</span><span class="where">Dentro do Gemini, em Ferramentas</span></div>
+      <div class="tool"><b>Aprendizado guiado</b><span>Estudar passo a passo, sem receber a resposta pronta.</span><span class="where">Dentro do Gemini, em Ferramentas</span></div>
+      <div class="tool"><b>Deep Research</b><span>Pesquisa completa com fontes.</span><span class="where">Dentro do Gemini, em Ferramentas</span></div>
+      <div class="tool"><b>Gems</b><span>Tutor personalizado para uma matéria.</span><span class="where">Dentro do Gemini, em Gems</span></div>
+      <div class="tool"><b>NotebookLM</b><span>Estudar a partir dos seus materiais.</span><a class="where" href="https://notebooklm.google.com/" target="_blank" rel="noopener">notebooklm.google.com</a></div>
+      <div class="tool"><b>Google AI Studio</b><span>Vibe coding mais avançado, com apps completos.</span><a class="where" href="https://aistudio.google.com/" target="_blank" rel="noopener">aistudio.google.com</a></div>
+      <div class="tool"><b>Google Lens</b><span>Fotografar um exercício e pedir explicação.</span><a class="where" href="https://lens.google.com/" target="_blank" rel="noopener">lens.google.com</a></div>
+    </div>
+    <p class="hint">Tudo funciona no navegador, sem instalar nada. Alguns recursos podem estar limitados para menores de 18 anos ou para contas escolares.</p>
+  </div>
+</section>
+
 <!-- BÔNUS -->
 <section id="bonus" style="--c:var(--blue)">
   <div class="wrap">
@@ -652,6 +692,54 @@ Use informações corretas e verificáveis sobre ${tema}. Use um visual ${$('#q-
     $('#ag-go').href = GL + encodeURIComponent(v ? `Me ensine ${v} passo a passo, para um aluno do ensino médio.` : 'Me ensine um assunto passo a passo.');
   }
   $('#ag-custom').addEventListener('input', agLink); agLink();
+
+  /* ---------- banco de prompts ---------- */
+  const GEM = 'https://gemini.google.com/app';
+  const PB = [
+    {t:'Revisar para a prova', f:'NotebookLM', c:'var(--red)', go:['Abrir NotebookLM','https://notebooklm.google.com/'],
+     p:'Com base nas fontes deste caderno, monte um plano de revisão de 3 dias para a prova de {materia} sobre {assunto}, com 30 minutos por dia. Para cada dia, diga o que estudar e termine com 3 perguntas para eu testar o que aprendi.',
+     h:'Antes, envie seu material (PDF, slides ou fotos do caderno) como fonte.'},
+    {t:'Entender a matéria', f:'Aprendizado guiado', c:'var(--blue)', go:['Abrir no Aprendizado guiado', GL],
+     p:'Me ensine {assunto} de {materia} passo a passo, para um aluno do {ano} do ensino médio. Use exemplos do dia a dia e me faça perguntas para conferir se entendi.',
+     h:'O Gemini explica em partes e confere se você entendeu antes de seguir.'},
+    {t:'Treinar com questões', f:'Gemini', c:'var(--yellow)', go:['Abrir o Gemini', GEM],
+     p:'Crie 5 questões de múltipla escolha no estilo do ENEM sobre {assunto} ({materia}), com 5 alternativas cada. Mostre uma questão por vez, espere minha resposta e só então diga se acertei e explique.',
+     h:'Responda de verdade antes de ver a explicação.'},
+    {t:'Revisar minha redação', f:'Gemini', c:'var(--yellow)', go:['Abrir o Gemini', GEM], fixed:true,
+     p:'Vou colar minha redação abaixo. Não reescreva o texto. Aponte os erros de ortografia, de concordância e de coesão, explique cada um e avalie as 5 competências da redação do ENEM, com uma dica para melhorar cada uma.\n\n[COLE SUA REDAÇÃO AQUI]',
+     h:'Quem corrige é você: use as dicas e reescreva com suas palavras.'},
+    {t:'Pesquisa para trabalho', f:'Deep Research', c:'var(--green)', go:['Abrir o Gemini', GEM],
+     p:'Faça uma pesquisa sobre {assunto} para um trabalho escolar de {materia} do {ano} do ensino médio. Organize em introdução, tópicos principais e conclusão, com fontes confiáveis e links. Use linguagem simples.',
+     h:'No Gemini, escolha Ferramentas → Deep Research antes de enviar. Abra as fontes e confira: a IA pode errar.'},
+    {t:'Criar um app de estudo', f:'Gemini Canvas', c:'var(--blue)', go:['Abrir o Gemini', GEM],
+     p:'Crie um app de flashcards interativo em uma única página web para eu estudar {assunto} ({materia}), com 15 cartões de pergunta e resposta, botão para virar o cartão, marcação de acertei e errei e um placar no final. Visual moderno e que funcione no celular.',
+     h:'No Gemini, escolha Ferramentas → Canvas antes de enviar.'}
+  ];
+  $('#pb-cards').innerHTML = PB.map((x,i)=>`
+    <div class="prompt" style="--c:${x.c}">
+      <div class="ptop"><label for="pb-${i}">${x.t}</label><span class="tag">${x.f}</span></div>
+      <textarea id="pb-${i}" style="min-height:170px"></textarea>
+      <p class="hint" style="margin:0">${x.h}</p>
+      <div class="row"><button class="btn small" type="button" data-copy="pb-${i}">Copiar</button><a class="btn small" id="pb-go-${i}" href="${x.go[1]}" target="_blank" rel="noopener">${x.go[0]}</a><span class="ok" role="status"></span></div>
+    </div>`).join('');
+
+  const pbEdited = PB.map(()=>false);
+  function pbFill(s){
+    const materia = $('#pb-materia').value.trim() || '[MATÉRIA]', assunto = $('#pb-assunto').value.trim() || '[ASSUNTO]';
+    return s.replace(/\{materia\}/g, materia).replace(/\{assunto\}/g, assunto).replace(/\{ano\}/g, $('#pb-ano').value);
+  }
+  function pbGuided(){ $('#pb-go-1').href = GL + encodeURIComponent($('#pb-1').value); }
+  function pbRefresh(){
+    PB.forEach((x,i)=>{ if(!x.fixed && !pbEdited[i]) $('#pb-'+i).value = pbFill(x.p); });
+    pbGuided();
+  }
+  PB.forEach((x,i)=>{
+    if (x.fixed) $('#pb-'+i).value = x.p;
+    $('#pb-'+i).addEventListener('input', ()=>{ pbEdited[i] = true; if (i===1) pbGuided(); });
+  });
+  $('#pbuilder').addEventListener('input', ()=>{ pbEdited.fill(false); pbRefresh(); });
+  $('#pbuilder').addEventListener('change', ()=>{ pbEdited.fill(false); pbRefresh(); });
+  pbRefresh();
 })();
 </script>
 </body>
