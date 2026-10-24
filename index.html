@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IA para Estudar · Oficina</title>
+<meta name="description" content="Oficina IA como ferramenta de aprendizado para estudantes — prompts prontos, materiais para o NotebookLM e desafios de algoritmo.">
+<link rel="icon" href="img/gemini.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: página única escura, como o template dos Embaixadores; hero com ilustrações 3D, roteiro em 4 etapas, cada etapa com ação prática (baixar, copiar, abrir). */
+:root{
+  --bg:#0b0d12; --surface:#14171f; --surface-2:#1b1f2a; --line:#2a2f3c; --fg:#f2f4f8; --muted:#a3abbb;
+  --blue:#4285F4; --red:#EA4335; --yellow:#FBBC04; --green:#34A853;
+  --font:"Google Sans Flex","Google Sans","Inter",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);font-size:17px;line-height:1.55}
+a{color:#8ab4ff}
+img{max-width:100%}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px))}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* nav */
+nav{position:sticky;top:0;z-index:20;background:rgba(11,13,18,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;gap:18px;min-height:58px;overflow-x:auto}
+nav .brand{display:flex;align-items:center;gap:8px;font-weight:700;white-space:nowrap;text-decoration:none;color:var(--fg)}
+nav .brand img{width:22px;height:22px}
+nav .links{display:flex;gap:4px;margin-left:auto}
+nav .links a{color:var(--muted);text-decoration:none;padding:8px 12px;border-radius:999px;font-size:15px;white-space:nowrap}
+nav .links a:hover{color:var(--fg);background:var(--surface-2)}
+
+/* hero */
+.hero{padding-block:56px 40px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:32px;align-items:center}
+@media (max-width:820px){.hero{grid-template-columns:1fr;padding-top:32px}}
+.pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:14px;color:var(--muted)}
+.pill img{width:18px}
+h1{font-size:clamp(34px,5.4vw,60px);line-height:1.05;margin:16px 0 14px;font-weight:700;letter-spacing:-.02em;text-wrap:balance}
+h1 .g{background:linear-gradient(90deg,var(--blue),var(--red) 35%,var(--yellow) 65%,var(--green));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{color:var(--muted);font-size:19px;max-width:56ch;margin:0 0 22px}
+.meta{display:flex;flex-wrap:wrap;gap:8px 18px;color:var(--muted);font-size:15px;margin-bottom:24px}
+.meta b{color:var(--fg);font-weight:600}
+.btns{display:flex;flex-wrap:wrap;gap:10px}
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:11px 20px;font:inherit;font-size:16px;font-weight:600;text-decoration:none;cursor:pointer;border:1px solid var(--line);background:var(--surface-2);color:var(--fg)}
+.btn:hover{border-color:#5a6274}
+.btn.primary{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.btn.small{padding:7px 14px;font-size:14px}
+.btn:focus-visible,button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.art{position:relative;aspect-ratio:1/1;max-width:440px;width:100%;justify-self:center}
+.art img{position:absolute;filter:drop-shadow(0 18px 30px rgba(0,0,0,.5))}
+.art .a1{width:58%;left:20%;top:16%}
+.art .a2{width:34%;left:0;top:0}
+.art .a3{width:30%;right:0;top:4%}
+.art .a4{width:34%;right:2%;bottom:2%}
+.art .a5{width:30%;left:2%;bottom:6%}
+
+/* sections */
+section{padding-block:48px;border-top:1px solid var(--line)}
+.eyebrow{font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--c,var(--blue))}
+h2{font-size:clamp(28px,3.6vw,40px);margin:6px 0 10px;line-height:1.15;letter-spacing:-.01em;text-wrap:balance}
+h3{font-size:21px;margin:0 0 8px}
+.intro{color:var(--muted);max-width:68ch;margin:0 0 26px}
+.sec-head{display:flex;gap:20px;align-items:center;margin-bottom:8px}
+.sec-head img{width:84px;height:84px;object-fit:contain;flex:none}
+@media (max-width:560px){.sec-head img{width:60px;height:60px}}
+
+/* roadmap */
+.road{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+@media (max-width:900px){.road{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.road{grid-template-columns:1fr}}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px;text-decoration:none;color:var(--fg);display:grid;gap:6px;align-content:start}
+.step:hover{border-color:var(--c)}
+.step .n{font-family:var(--mono);font-size:13px;color:var(--c)}
+.step strong{font-size:18px}
+.step span{color:var(--muted);font-size:15px}
+.step .t{font-family:var(--mono);font-size:13px;color:var(--muted)}
+
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:860px){.grid2,.grid3{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px;min-width:0}
+.card p{margin:6px 0}
+.card .muted{color:var(--muted)}
+ol.steps{margin:0;padding-left:22px;display:grid;gap:6px}
+
+table.recipe{width:100%;border-collapse:collapse;font-size:16px}
+table.recipe th,table.recipe td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left}
+table.recipe th{color:var(--muted);font-weight:600;font-size:14px}
+
+/* materials */
+.mats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+@media (max-width:980px){.mats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:540px){.mats{grid-template-columns:1fr}}
+.mat{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px;display:grid;gap:10px;align-content:start;border-top:4px solid var(--c)}
+.mat header{display:flex;align-items:center;gap:10px}
+.mat header img{width:46px;height:46px;object-fit:contain}
+.mat h3{margin:0;font-size:19px}
+.mat small{color:var(--muted)}
+.mat a.pdf{display:flex;gap:10px;align-items:baseline;padding:9px 12px;border-radius:12px;background:var(--surface-2);text-decoration:none;color:var(--fg);font-size:15px}
+.mat a.pdf:hover{outline:1px solid var(--c)}
+.mat a.pdf b{font-family:var(--mono);color:var(--c);font-size:13px}
+
+.tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:860px){.tools{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.tools{grid-template-columns:1fr}}
+.tool{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.tool b{display:block;margin-bottom:2px}
+.tool span{color:var(--muted);font-size:15px}
+
+/* prompts */
+.prompt{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:10px;min-width:0}
+.prompt label{font-weight:600;font-size:15px}
+.prompt textarea{width:100%;min-height:96px;resize:vertical;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:12px;font:inherit;font-size:15px;line-height:1.5}
+.prompt .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.ok{color:var(--green);font-size:14px;font-weight:600}
+.hint{color:var(--muted);font-size:14px}
+.hl{background:rgba(251,188,4,.16);border-radius:4px;padding:0 3px}
+
+/* builder */
+.builder{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:18px;align-items:start}
+@media (max-width:900px){.builder{grid-template-columns:1fr}}
+fieldset{border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:0 0 12px}
+legend{padding:0 6px;color:var(--muted);font-size:14px;font-weight:600}
+.f{display:grid;gap:6px;margin-bottom:10px}
+.f label{font-size:15px;font-weight:600}
+input[type=text],input[type=number],select{width:100%;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:9px 11px;font:inherit;font-size:15px}
+.checks{display:grid;gap:8px}
+.checks label{display:flex;gap:10px;align-items:flex-start;font-size:15px;font-weight:400}
+.checks input[type=checkbox]{margin-top:4px;accent-color:var(--blue);width:17px;height:17px;flex:none}
+.subj{display:grid;gap:6px;padding:10px;border-radius:12px;background:var(--surface-2)}
+.subj input[type=text]{font-size:14px}
+
+.callout{border-radius:16px;padding:16px 18px;background:var(--surface-2);border:1px solid var(--line)}
+.callout b{color:var(--yellow)}
+
+.rules{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+@media (max-width:900px){.rules{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.rules{grid-template-columns:1fr}}
+
+footer{border-top:1px solid var(--line);padding-block:36px 48px;color:var(--muted);font-size:15px}
+footer .who{display:flex;gap:16px;align-items:center;margin-bottom:16px}
+footer .who img{width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid var(--surface-2)}
+footer .who b{color:var(--fg);font-size:18px}
+.amb{display:flex;align-items:center;gap:8px;color:var(--fg);font-weight:600}
+.amb img{width:20px}
+</style>
+</head>
+<body>
+
+<nav aria-label="Seções">
+  <div class="wrap">
+    <a class="brand" href="#inicio"><img src="img/gemini.png" alt="">IA para Estudar</a>
+    <div class="links">
+      <a href="#roteiro">Roteiro</a>
+      <a href="#algoritmo">1. Algoritmo</a>
+      <a href="#notebooklm">2. NotebookLM</a>
+      <a href="#canvas">3. Canvas</a>
+      <a href="#responsavel">4. Uso responsável</a>
+      <a href="#bonus">Bônus</a>
+    </div>
+  </div>
+</nav>
+
+<header id="inicio" class="wrap hero">
+  <div>
+    <span class="pill"><img src="img/g.png" alt="">Embaixadores Estudantis do Google · Oficina</span>
+    <h1>IA como ferramenta de <span class="g">aprendizado</span> para estudantes</h1>
+    <p class="lede">Tudo o que você precisa para a oficina em um só lugar: os desafios de lógica, os materiais para estudar no NotebookLM e os comandos prontos para criar seu painel de estudos no Gemini.</p>
+    <div class="meta">
+      <span><b>SEMEI 2026 + IF Comunidade</b></span>
+      <span>IFRR · Campus Boa Vista Zona Oeste</span>
+      <span>Laboratório de Informática 1</span>
+    </div>
+    <div class="btns">
+      <a class="btn primary" href="https://gemini.google.com/app" target="_blank" rel="noopener">Abrir o Gemini</a>
+      <a class="btn" href="https://notebooklm.google.com/" target="_blank" rel="noopener">Abrir o NotebookLM</a>
+      <a class="btn" href="apresentacao.pdf" target="_blank" rel="noopener">Apresentação (PDF)</a>
+    </div>
+  </div>
+  <div class="art" aria-hidden="true">
+    <img class="a1" src="img/computador.png" alt="">
+    <img class="a2" src="img/estrela.png" alt="">
+    <img class="a3" src="img/cerebro.png" alt="">
+    <img class="a4" src="img/livros.png" alt="">
+    <img class="a5" src="img/lampada.png" alt="">
+  </div>
+</header>
+
+<section id="roteiro">
+  <div class="wrap">
+    <div class="eyebrow">Roteiro da oficina</div>
+    <h2>Quatro etapas, da lógica ao seu painel de estudos</h2>
+    <p class="intro">Primeiro você entende como dar boas instruções. Depois usa a IA para organizar o estudo e, por fim, cria uma ferramenta de estudo sua.</p>
+    <div class="road">
+      <a class="step" href="#algoritmo" style="--c:var(--blue)"><span class="n">ETAPA 1</span><strong>Algoritmo</strong><span>Torre de Hanói, travessia do rio e a receita de bolo.</span></a>
+      <a class="step" href="#notebooklm" style="--c:var(--red)"><span class="n">ETAPA 2</span><strong>NotebookLM</strong><span>Um caderno de estudos que responde só com base nas suas fontes.</span></a>
+      <a class="step" href="#canvas" style="--c:var(--yellow)"><span class="n">ETAPA 3</span><strong>Gemini Canvas</strong><span>Crie seu painel de estudos com metas, checklist e tempo de estudo.</span></a>
+      <a class="step" href="#responsavel" style="--c:var(--green)"><span class="n">ETAPA 4</span><strong>Uso responsável</strong><span>Como usar IA para aprender, e não para colar.</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ETAPA 1 -->
+<section id="algoritmo" style="--c:var(--blue)">
+  <div class="wrap">
+    <div class="sec-head"><img src="img/lampada.png" alt=""><div><div class="eyebrow">Etapa 1</div><h2>Algoritmo é uma receita de bolo</h2></div></div>
+    <p class="intro">Um algoritmo é uma sequência de instruções claras, em ordem, para resolver um problema. O computador, e também a IA, segue o que você manda. Se a instrução estiver confusa, o resultado sai errado.</p>
+    <div class="grid2">
+      <div class="card">
+        <h3>Desafios de lógica</h3>
+        <p class="muted">Resolva junto com a turma e veja cada passo virar uma instrução do algoritmo.</p>
+        <ol class="steps">
+          <li><b>Travessia do rio:</b> leve a raposa, a galinha e o milho para a outra margem sem que ninguém seja comido.</li>
+          <li><b>Torre de Hanói:</b> mova os discos da torre A para a C, sem nunca colocar um disco maior sobre um menor.</li>
+        </ol>
+        <p style="margin-top:14px"><a class="btn primary" href="desafios.html">Abrir os desafios</a></p>
+      </div>
+      <div class="card">
+        <h3>Da receita ao prompt</h3>
+        <table class="recipe">
+          <thead><tr><th>Receita de bolo</th><th>Algoritmo</th><th>Prompt para a IA</th></tr></thead>
+          <tbody>
+            <tr><td>Ingredientes</td><td>Entrada</td><td>Contexto e arquivos</td></tr>
+            <tr><td>Modo de preparo</td><td>Instruções</td><td>O que você pede, em ordem</td></tr>
+            <tr><td>Bolo pronto</td><td>Saída</td><td>A resposta da IA</td></tr>
+          </tbody>
+        </table>
+        <p class="muted" style="margin-top:12px">Quanto mais clara a receita, melhor o bolo. Com prompts é igual.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ETAPA 2 -->
+<section id="notebooklm" style="--c:var(--red)">
+  <div class="wrap">
+    <div class="sec-head"><img src="img/livros.png" alt=""><div><div class="eyebrow">Etapa 2</div><h2>NotebookLM: seu caderno de estudos com IA</h2></div></div>
+    <p class="intro">No NotebookLM você cria um caderno fechado sobre um assunto. A IA responde <b>só com base nos arquivos que você enviar</b> e mostra de onde tirou cada resposta. Assim ela inventa muito menos.</p>
+
+    <div class="grid2" style="margin-bottom:26px">
+      <div class="card">
+        <h3>Passo a passo</h3>
+        <ol class="steps">
+          <li>Escolha uma matéria abaixo e baixe os 3 PDFs.</li>
+          <li>Abra o <a href="https://notebooklm.google.com/" target="_blank" rel="noopener">NotebookLM</a> e clique em <b>Criar novo caderno</b>.</li>
+          <li>Envie os 3 PDFs como fontes. Também dá para adicionar links de sites e vídeos do YouTube.</li>
+          <li>Faça perguntas no chat. Clique nos números das respostas para ver o trecho exato da fonte.</li>
+          <li>No painel <b>Estúdio</b>, gere materiais de estudo. Escolha dois para testar hoje.</li>
+        </ol>
+      </div>
+      <div class="callout">
+        <p style="margin-top:0"><b>Por que três textos?</b> Eles são do mesmo tema e se completam. O NotebookLM consegue ligar as ideias entre eles, o que fica ótimo no mapa mental.</p>
+        <p style="margin-bottom:0">Em casa, faça o mesmo com o PDF, os slides ou as fotos do caderno de qualquer matéria.</p>
+      </div>
+    </div>
+
+    <h3>Materiais para baixar</h3>
+    <div class="mats" id="mats" style="margin:12px 0 30px"></div>
+
+    <h3>Ferramentas do painel Estúdio</h3>
+    <p class="hint" style="margin:4px 0 12px">Os nomes podem variar um pouco na sua tela. Alguns recursos podem não estar liberados para contas de menores de 18 anos.</p>
+    <div class="tools" style="margin-bottom:30px">
+      <div class="tool"><b>Resumo em áudio</b><span>Um podcast com duas vozes conversando sobre suas fontes. Ótimo para revisar no ônibus.</span></div>
+      <div class="tool"><b>Resumo em vídeo</b><span>Um vídeo narrado com imagens que explica os pontos principais.</span></div>
+      <div class="tool"><b>Mapa mental</b><span>Mostra os conceitos e como eles se ligam. Clique em um tópico para abrir mais detalhes.</span></div>
+      <div class="tool"><b>Relatórios</b><span>Guia de estudo, perguntas frequentes, resumo e outros formatos de texto.</span></div>
+      <div class="tool"><b>Flashcards</b><span>Cartões de pergunta e resposta para memorizar. Marque os que acertou e os que errou.</span></div>
+      <div class="tool"><b>Teste</b><span>Questões de múltipla escolha geradas a partir das fontes, com explicação.</span></div>
+      <div class="tool"><b>Apresentação de slides</b><span>Um conjunto de slides sobre o tema, para estudar ou apresentar.</span></div>
+      <div class="tool"><b>Infográfico</b><span>Uma imagem que resume o conteúdo de forma visual.</span></div>
+      <div class="tool"><b>Tabela de dados</b><span>Organiza informações das fontes em uma tabela comparativa.</span></div>
+    </div>
+
+    <h3>Perguntas prontas para o chat do NotebookLM</h3>
+    <p class="hint" style="margin:4px 0 12px">Edite o texto se quiser e clique em Copiar. Depois cole no chat do seu caderno.</p>
+    <div class="grid2" id="nlm-prompts"></div>
+  </div>
+</section>
+
+<!-- ETAPA 3 -->
+<section id="canvas" style="--c:var(--yellow)">
+  <div class="wrap">
+    <div class="sec-head"><img src="img/computador.png" alt=""><div><div class="eyebrow">Etapa 3</div><h2>Crie seu painel de estudos no Gemini Canvas</h2></div></div>
+    <p class="intro">Com o Canvas, você descreve o que quer e o Gemini cria uma página interativa. Monte abaixo o seu pedido. O comando vai sendo escrito sozinho, e você pode editar antes de copiar.</p>
+
+    <div class="builder">
+      <form id="builder" class="card" onsubmit="return false">
+        <fieldset>
+          <legend>Sobre você</legend>
+          <div class="f"><label for="b-ano">Ano</label>
+            <select id="b-ano"><option>1º ano</option><option>2º ano</option><option>3º ano</option></select></div>
+          <div class="f"><label for="b-curso">Curso técnico (opcional)</label>
+            <input type="text" id="b-curso" placeholder="Ex.: Informática, Agropecuária..."></div>
+          <div class="f"><label for="b-tempo">Meta de estudo por dia (minutos)</label>
+            <input type="number" id="b-tempo" value="60" min="10" max="600" step="5"></div>
+        </fieldset>
+        <fieldset>
+          <legend>Matérias e assuntos</legend>
+          <div class="checks" id="b-materias"></div>
+          <div class="f" style="margin-top:10px"><label for="b-extra">Outra matéria (opcional)</label>
+            <input type="text" id="b-extra" placeholder="Ex.: História: Brasil Colônia, Independência"></div>
+        </fieldset>
+        <fieldset>
+          <legend>O que o painel deve ter</legend>
+          <div class="checks">
+            <label><input type="checkbox" id="o-check" checked> Lista de desafios por assunto, com caixas para marcar como concluído</label>
+            <label><input type="checkbox" id="o-timer" checked> Cronômetro Pomodoro (25 min de foco e 5 de pausa) que soma o tempo por matéria</label>
+            <label><input type="checkbox" id="o-info" checked> Infográficos com o progresso de cada matéria e o tempo total</label>
+            <label><input type="checkbox" id="o-meta" checked> Barra de progresso da meta diária</label>
+            <label><input type="checkbox" id="o-frase"> Uma frase motivacional diferente a cada dia</label>
+          </div>
+        </fieldset>
+        <div class="f"><label for="b-estilo">Estilo visual</label>
+          <select id="b-estilo">
+            <option value="moderno e escuro, com cores vibrantes">Moderno e escuro</option>
+            <option value="claro e minimalista">Claro e minimalista</option>
+            <option value="colorido e divertido, estilo jogo">Colorido, estilo jogo</option>
+            <option value="com as cores do Google (azul, vermelho, amarelo e verde)">Cores do Google</option>
+          </select></div>
+      </form>
+
+      <div style="display:grid;gap:14px;min-width:0">
+        <div class="prompt">
+          <label for="b-out">Seu comando para o Canvas</label>
+          <textarea id="b-out" style="min-height:330px"></textarea>
+          <div class="row">
+            <button class="btn primary small" type="button" data-copy="b-out">Copiar comando</button>
+            <a class="btn small" href="https://gemini.google.com/app" target="_blank" rel="noopener">Abrir o Gemini</a>
+            <span class="ok" role="status"></span>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Como usar</h3>
+          <ol class="steps">
+            <li>Copie o comando e abra o Gemini.</li>
+            <li>Clique em <b>Ferramentas</b> (ou no <b>+</b>) e escolha <b>Canvas</b>.</li>
+            <li>Cole o comando e envie. Espere o painel aparecer ao lado.</li>
+            <li>Teste o painel e continue a conversa pedindo ajustes.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:30px">Continue a conversa: ajustes para pedir</h3>
+    <p class="hint" style="margin:4px 0 12px">O primeiro resultado raramente é o final. Peça uma mudança por vez. Você também pode selecionar uma parte do painel e pedir mudança só nela.</p>
+    <div class="grid3" id="canvas-followups"></div>
+    <p class="hint" style="margin-top:14px">O progresso marcado no painel pode não ficar salvo para sempre. Trate o painel como um protótipo que você pode melhorar.</p>
+  </div>
+</section>
+
+<!-- ETAPA 4 -->
+<section id="responsavel" style="--c:var(--green)">
+  <div class="wrap">
+    <div class="sec-head"><img src="img/capelo.png" alt=""><div><div class="eyebrow">Etapa 4</div><h2>Use com responsabilidade</h2></div></div>
+    <p class="intro">A IA é uma ótima ferramenta de estudo quando você continua pensando. Quatro regras para levar:</p>
+    <div class="rules">
+      <div class="card"><h3>A IA erra</h3><p class="muted">Ela pode inventar datas, números e fontes com muita confiança. Confira o que for importante.</p></div>
+      <div class="card"><h3>Entender ≠ copiar</h3><p class="muted">Usar para entender é aprender. Entregar a resposta pronta é colar.</p></div>
+      <div class="card"><h3>Pergunte ao professor</h3><p class="muted">Cada professor tem regras sobre o uso de IA nos trabalhos. Combine antes.</p></div>
+      <div class="card"><h3>Proteja seus dados</h3><p class="muted">Nada de senhas, documentos ou dados pessoais seus ou de outras pessoas.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- BÔNUS -->
+<section id="bonus" style="--c:var(--blue)">
+  <div class="wrap">
+    <div class="sec-head"><img src="img/foguete.png" alt=""><div><div class="eyebrow">Bônus para testar em casa</div><h2>Mais dois jeitos de estudar com o Gemini</h2></div></div>
+    <div class="grid2">
+      <div class="card">
+        <h3>Aprendizado guiado</h3>
+        <p class="muted">O Gemini vira professor: explica em partes, faz perguntas e confere se você entendeu antes de seguir. Os botões abaixo já abrem o Gemini com o pedido escrito.</p>
+        <div class="btns" id="ag-links" style="margin:12px 0"></div>
+        <div class="f"><label for="ag-custom">Ou escreva o seu assunto</label>
+          <input type="text" id="ag-custom" placeholder="Ex.: equações do 1º grau"></div>
+        <a class="btn small" id="ag-go" href="#" target="_blank" rel="noopener">Abrir no Aprendizado guiado</a>
+      </div>
+      <div class="card">
+        <h3>Gems: seu tutor personalizado</h3>
+        <p class="muted">Um Gem é um Gemini com instruções fixas. No Gemini, abra <b>Gems</b> e clique em <b>Novo Gem</b>. Cole as instruções abaixo, trocando a matéria e o curso.</p>
+        <div class="prompt" style="margin-top:10px;background:var(--surface-2)">
+          <label for="gem-out">Instruções do Gem</label>
+          <textarea id="gem-out" style="min-height:150px">Você é um tutor de [MATÉRIA] para alunos do [ANO] do ensino médio integrado do IFRR, curso de [CURSO]. Nunca dê a resposta pronta: faça perguntas, dê dicas e explique o raciocínio passo a passo. Use exemplos do dia a dia de Roraima. No fim de cada explicação, faça uma pergunta para conferir se eu entendi. Se eu errar, explique o erro com calma e me dê outra chance.</textarea>
+          <div class="row"><button class="btn primary small" type="button" data-copy="gem-out">Copiar instruções</button><a class="btn small" href="https://gemini.google.com/app" target="_blank" rel="noopener">Abrir o Gemini</a><span class="ok" role="status"></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="who">
+      <img src="img/bruno.jpg" alt="Foto de Bruno Freitas">
+      <div>
+        <b>Bruno Freitas</b><br>
+        Embaixador Estudantil do Google · Design Gráfico, IFRR<br>
+        <a href="https://www.instagram.com/brunort777/" target="_blank" rel="noopener">Instagram</a> ·
+        <a href="https://www.linkedin.com/in/bruno-freitas-172316394/" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+    <p class="amb"><img src="img/g.png" alt="">Embaixadores Estudantis do Google</p>
+    <p>Este projeto pertence a Bruno Freitas de Souza, que é responsável por seu conteúdo e por mantê-lo atualizado. Esta não é uma página oficial do Google.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const $ = s => document.querySelector(s);
+
+  /* ---------- copiar ---------- */
+  function copy(el, status){
+    const text = el.value;
+    const done = () => { if(status){ status.textContent = 'Copiado!'; setTimeout(()=>status.textContent='', 2200); } };
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(done).catch(()=>{ el.select(); document.execCommand && document.execCommand('copy'); done(); });
+    } else { el.select(); try{ document.execCommand('copy'); }catch(e){} done(); }
+  }
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-copy]'); if(!b) return;
+    copy(document.getElementById(b.dataset.copy), b.parentElement.querySelector('.ok'));
+  });
+
+  /* ---------- materiais ---------- */
+  const MATS = [
+    {m:'Matemática', u:'Funções', c:'var(--blue)', img:'tablet', files:[
+      ['matematica-1-o-que-e-funcao.pdf','O que é uma função'],
+      ['matematica-2-funcao-afim.pdf','Função afim (1º grau)'],
+      ['matematica-3-funcao-quadratica.pdf','Função quadrática (2º grau)']]},
+    {m:'Português', u:'Linguagem e texto', c:'var(--red)', img:'livros', files:[
+      ['portugues-1-figuras-de-linguagem.pdf','Figuras de linguagem'],
+      ['portugues-2-tipos-e-generos-textuais.pdf','Tipos e gêneros textuais'],
+      ['portugues-3-coesao-e-coerencia.pdf','Coesão e coerência']]},
+    {m:'Ciências', u:'Energia nos seres vivos', c:'var(--green)', img:'globo', files:[
+      ['ciencias-1-fotossintese.pdf','Fotossíntese'],
+      ['ciencias-2-respiracao-celular.pdf','Respiração celular'],
+      ['ciencias-3-cadeias-alimentares.pdf','Cadeias e teias alimentares']]},
+    {m:'Tecnologia', u:'Computação e IA', c:'var(--yellow)', img:'computador', files:[
+      ['tecnologia-1-algoritmos.pdf','Algoritmos e lógica de programação'],
+      ['tecnologia-2-como-funciona-a-internet.pdf','Como funciona a internet'],
+      ['tecnologia-3-inteligencia-artificial.pdf','Inteligência artificial: o básico']]}
+  ];
+  $('#mats').innerHTML = MATS.map(x => `
+    <article class="mat" style="--c:${x.c}">
+      <header><img src="img/${x.img}.png" alt=""><div><h3>${x.m}</h3><small>${x.u}</small></div></header>
+      ${x.files.map((f,i)=>`<a class="pdf" href="materiais/${f[0]}" download><b>${i+1}</b>${f[1]}</a>`).join('')}
+    </article>`).join('');
+
+  /* ---------- prompts do NotebookLM ---------- */
+  const NLM = [
+    ['Resumo em tópicos','Faça um resumo dos pontos principais destas fontes em tópicos curtos, para um aluno do ensino médio. No final, destaque os 3 conceitos mais importantes.'],
+    ['Explicação simples','Explique o conceito de [CONCEITO] como se eu tivesse 15 anos, com um exemplo do dia a dia de Roraima. Mostre em qual fonte isso aparece.'],
+    ['Questões de prova','Crie 5 questões de múltipla escolha no estilo do ENEM sobre estas fontes, com 5 alternativas cada. Coloque o gabarito comentado só no final.'],
+    ['Conexões entre os textos','Quais ideias destas três fontes se relacionam entre si? Explique as conexões entre os textos.'],
+    ['Plano de revisão','Monte um plano de revisão de 3 dias com base nestas fontes, com 30 minutos por dia, indicando o que estudar em cada dia.'],
+    ['Corrija meu entendimento','Vou explicar com minhas palavras o que entendi sobre [ASSUNTO]. Compare com as fontes e diga o que está certo, o que está errado e o que faltou: [ESCREVA AQUI SUA EXPLICAÇÃO]']
+  ];
+  $('#nlm-prompts').innerHTML = NLM.map((p,i)=>`
+    <div class="prompt"><label for="nlm-${i}">${p[0]}</label>
+      <textarea id="nlm-${i}">${p[1]}</textarea>
+      <div class="row"><button class="btn small" type="button" data-copy="nlm-${i}">Copiar</button><span class="ok" role="status"></span></div>
+    </div>`).join('');
+
+  /* ---------- construtor do Canvas ---------- */
+  const SUBJ = [
+    ['Matemática','funções, porcentagem, geometria'],
+    ['Português','interpretação de texto, figuras de linguagem, redação'],
+    ['Ciências','fotossíntese, respiração celular, ecologia'],
+    ['Tecnologia','algoritmos, internet, inteligência artificial']
+  ];
+  $('#b-materias').innerHTML = SUBJ.map((s,i)=>`
+    <div class="subj">
+      <label><input type="checkbox" id="s-${i}" checked> <b>${s[0]}</b></label>
+      <input type="text" id="s-${i}-a" value="${s[1]}" aria-label="Assuntos de ${s[0]}">
+    </div>`).join('');
+
+  let edited = false;
+  function build(){
+    const ano = $('#b-ano').value, curso = $('#b-curso').value.trim(), tempo = $('#b-tempo').value || 60;
+    const mats = SUBJ.map((s,i)=> $('#s-'+i).checked ? `- ${s[0]}: ${$('#s-'+i+'-a').value.trim()}` : null).filter(Boolean);
+    const extra = $('#b-extra').value.trim(); if (extra) mats.push('- ' + extra);
+    const feats = [];
+    if ($('#o-check').checked) feats.push('- Uma lista de desafios para cada assunto, com caixas de seleção para marcar como concluído.');
+    if ($('#o-timer').checked) feats.push('- Um cronômetro no método Pomodoro (25 minutos de foco e 5 de pausa), em que eu escolho a matéria antes de começar, e que soma o tempo estudado em cada matéria.');
+    if ($('#o-info').checked) feats.push('- Infográficos mostrando o progresso de cada matéria (porcentagem de desafios concluídos) e o tempo total estudado.');
+    if ($('#o-meta').checked) feats.push(`- Uma meta diária de ${tempo} minutos de estudo, com barra de progresso.`);
+    if ($('#o-frase').checked) feats.push('- Uma frase motivacional diferente a cada dia.');
+    const quem = `um estudante do ${ano} do ensino médio integrado` + (curso ? `, do curso técnico em ${curso}` : '');
+    return `Crie um painel de estudos interativo (dashboard) em uma única página web, para ${quem}.
+
+Divida o painel por matéria. Estas são as matérias e os assuntos de cada uma:
+${mats.join('\n') || '- (escolha pelo menos uma matéria)'}
+
+O painel deve ter:
+${feats.join('\n') || '- (escolha pelo menos um recurso)'}
+
+Use um visual ${$('#b-estilo').value}, com uma cor diferente para cada matéria, e que funcione bem no celular e no computador. Salve o progresso no navegador para não perder ao recarregar a página. Escreva todos os textos em português.`;
+  }
+  function refresh(){ if(!edited) $('#b-out').value = build(); }
+  $('#builder').addEventListener('input', ()=>{ edited=false; refresh(); });
+  $('#builder').addEventListener('change', ()=>{ edited=false; refresh(); });
+  $('#b-out').addEventListener('input', ()=> edited = true);
+  refresh();
+
+  const FOLLOW = [
+    'Adicione um gráfico de pizza mostrando o tempo estudado em cada matéria.',
+    'Adicione um modo escuro com um botão para alternar.',
+    'Crie uma aba de revisão com 5 perguntas de múltipla escolha para cada matéria.',
+    'Adicione um botão para zerar o progresso da semana.',
+    'Deixe os botões maiores e mais fáceis de clicar no celular.',
+    'Mostre uma medalha quando eu completar todos os desafios de uma matéria.'
+  ];
+  $('#canvas-followups').innerHTML = FOLLOW.map((t,i)=>`
+    <div class="prompt"><textarea id="fu-${i}" style="min-height:92px">${t}</textarea>
+      <div class="row"><button class="btn small" type="button" data-copy="fu-${i}">Copiar</button><span class="ok" role="status"></span></div></div>`).join('');
+
+  /* ---------- Aprendizado guiado ---------- */
+  const GL = 'https://gemini.google.com/guided-learning?query=';
+  const AG = [
+    ['Matemática','Me ensine função do 2º grau passo a passo, para um aluno do ensino médio.'],
+    ['Português','Me ensine a identificar figuras de linguagem, com exemplos, para um aluno do ensino médio.'],
+    ['Ciências','Me ensine como a fotossíntese e a respiração celular se relacionam, para um aluno do ensino médio.'],
+    ['Tecnologia','Me ensine o que é um algoritmo e como funciona a lógica de programação, para um iniciante.']
+  ];
+  $('#ag-links').innerHTML = AG.map(a=>`<a class="btn small" href="${GL+encodeURIComponent(a[1])}" target="_blank" rel="noopener">${a[0]}</a>`).join('');
+  function agLink(){
+    const v = $('#ag-custom').value.trim();
+    $('#ag-go').href = GL + encodeURIComponent(v ? `Me ensine ${v} passo a passo, para um aluno do ensino médio.` : 'Me ensine um assunto passo a passo.');
+  }
+  $('#ag-custom').addEventListener('input', agLink); agLink();
+})();
+</script>
+</body>
+</html>
