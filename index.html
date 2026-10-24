@@ -138,9 +138,11 @@ legend{padding:0 6px;color:var(--muted);font-size:14px;font-weight:600}
 input[type=text],input[type=number],select{width:100%;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:9px 11px;font:inherit;font-size:15px}
 .checks{display:grid;gap:8px}
 .checks label{display:flex;gap:10px;align-items:flex-start;font-size:15px;font-weight:400}
-.checks input[type=checkbox]{margin-top:4px;accent-color:var(--blue);width:17px;height:17px;flex:none}
+.checks input[type=checkbox],.checks input[type=radio]{margin-top:4px;accent-color:var(--blue);width:17px;height:17px;flex:none}
 .subj{display:grid;gap:6px;padding:10px;border-radius:12px;background:var(--surface-2)}
 .subj input[type=text]{font-size:14px}
+.f textarea{width:100%;min-height:120px;resize:vertical;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:9px 11px;font:inherit;font-size:15px;line-height:1.5}
+#builder [hidden]{display:none}
 
 .callout{border-radius:16px;padding:16px 18px;background:var(--surface-2);border:1px solid var(--line)}
 .callout b{color:var(--yellow)}
@@ -312,6 +314,18 @@ footer .who b{color:var(--fg);font-size:18px}
             <input type="number" id="b-tempo" value="60" min="10" max="600" step="5"></div>
         </fieldset>
         <fieldset>
+          <legend>De onde vem o conteúdo?</legend>
+          <div class="checks">
+            <label><input type="radio" name="b-fonte" value="arquivos" checked> Meus arquivos (PDFs, apostila ou fotos do caderno)</label>
+            <label><input type="radio" name="b-fonte" value="resumo"> Colar meu resumo</label>
+            <label><input type="radio" name="b-fonte" value="gemini"> O Gemini cria o conteúdo</label>
+          </div>
+          <p class="hint" id="b-dica-arquivos" style="margin:10px 0 0">No Gemini, antes de enviar, clique no + e anexe seus arquivos. Você pode usar os PDFs da etapa 2.</p>
+          <p class="hint" id="b-dica-gemini" style="margin:10px 0 0" hidden>O Gemini vai escrever o conteúdo. Confira com seu livro e seu professor.</p>
+          <div class="f" id="b-resumo-box" style="margin:10px 0 0" hidden><label for="b-resumo">Cole aqui seu resumo ou suas anotações</label>
+            <textarea id="b-resumo"></textarea></div>
+        </fieldset>
+        <fieldset>
           <legend>Matérias e assuntos</legend>
           <div class="checks" id="b-materias"></div>
           <div class="f" style="margin-top:10px"><label for="b-extra">Outra matéria (opcional)</label>
@@ -320,6 +334,7 @@ footer .who b{color:var(--fg);font-size:18px}
         <fieldset>
           <legend>O que o painel deve ter</legend>
           <div class="checks">
+            <label><input type="checkbox" id="o-area" checked> Área de estudo em cada assunto: resumo, flashcards e mini-teste</label>
             <label><input type="checkbox" id="o-check" checked> Lista de desafios por assunto, com caixas para marcar como concluído</label>
             <label><input type="checkbox" id="o-timer" checked> Cronômetro Pomodoro (25 min de foco e 5 de pausa) que soma o tempo por matéria</label>
             <label><input type="checkbox" id="o-info" checked> Infográficos com o progresso de cada matéria e o tempo total</label>
@@ -351,7 +366,7 @@ footer .who b{color:var(--fg);font-size:18px}
           <ol class="steps">
             <li>Copie o comando e abra o Gemini.</li>
             <li>Clique em <b>Ferramentas</b> (ou no <b>+</b>) e escolha <b>Canvas</b>.</li>
-            <li>Cole o comando e envie. Espere o painel aparecer ao lado.</li>
+            <li>Se escolheu Meus arquivos, clique no + e anexe os arquivos. Depois cole o comando e envie.</li>
             <li>Teste o painel e continue a conversa pedindo ajustes.</li>
           </ol>
         </div>
@@ -602,12 +617,31 @@ footer .who b{color:var(--fg);font-size:18px}
     </div>`).join('');
 
   let edited = false;
+  const fonte = () => $('input[name="b-fonte"]:checked').value;
+  function fonteUI(){
+    const f = fonte();
+    $('#b-dica-arquivos').hidden = f!=='arquivos';
+    $('#b-dica-gemini').hidden = f!=='gemini';
+    $('#b-resumo-box').hidden = f!=='resumo';
+    SUBJ.forEach((s,i)=> $('#s-'+i+'-a').placeholder = f==='arquivos' ? 'Opcional: assuntos dos arquivos' : '');
+  }
   function build(){
-    const ano = $('#b-ano').value, curso = $('#b-curso').value.trim(), tempo = $('#b-tempo').value || 60;
-    const mats = SUBJ.map((s,i)=> $('#s-'+i).checked ? `- ${s[0]}: ${$('#s-'+i+'-a').value.trim()}` : null).filter(Boolean);
+    const ano = $('#b-ano').value, curso = $('#b-curso').value.trim(), tempo = $('#b-tempo').value || 60, f = fonte();
+    const mats = SUBJ.map((s,i)=>{
+      if (!$('#s-'+i).checked) return null;
+      const a = $('#s-'+i+'-a').value.trim() || (f==='arquivos' ? 'use os assuntos encontrados nos arquivos' : '');
+      return a ? `- ${s[0]}: ${a}` : `- ${s[0]}`;
+    }).filter(Boolean);
     const extra = $('#b-extra').value.trim(); if (extra) mats.push('- ' + extra);
+    let conteudo;
+    if (f==='arquivos') conteudo = 'Use APENAS o conteúdo dos arquivos que anexei nesta conversa. Não invente informações que não estejam neles. Organize o painel pelas matérias e pelos assuntos desses arquivos.'
+      + (mats.length ? '\n\nMatérias e assuntos que quero no painel:\n' + mats.join('\n') : '');
+    else conteudo = (f==='resumo' ? 'Use APENAS o conteúdo do meu resumo abaixo. Não invente informações que não estejam nele.' : 'Escreva você o conteúdo de estudo de cada assunto, com informações corretas e linguagem adequada ao ensino médio.')
+      + `\n\nDivida o painel por matéria. Estas são as matérias e os assuntos de cada uma:\n${mats.join('\n') || '- (escolha pelo menos uma matéria)'}`;
+    const resumo = f==='resumo' ? `\n\n--- MEU RESUMO ---\n${$('#b-resumo').value.trim() || '[COLE SEU RESUMO AQUI]'}\n--- FIM DO RESUMO ---` : '';
     const feats = [];
-    if ($('#o-check').checked) feats.push('- Uma lista de desafios para cada assunto, com caixas de seleção para marcar como concluído.');
+    if ($('#o-area').checked) feats.push('- Para cada assunto, crie uma área de estudo com três abas: Estudar (um resumo claro com exemplos), Flashcards (de 8 a 10 cartões de pergunta e resposta que viram ao clicar) e Mini-teste (5 questões de múltipla escolha com correção e explicação).');
+    if ($('#o-check').checked) feats.push('- Uma lista de desafios para cada assunto, ligados à área de estudo (ler o resumo, revisar todos os flashcards, acertar pelo menos 4 de 5 no mini-teste), com caixas para marcar como concluído. Marque automaticamente o desafio do mini-teste quando o aluno atingir a nota.');
     if ($('#o-timer').checked) feats.push('- Um cronômetro no método Pomodoro (25 minutos de foco e 5 de pausa), em que eu escolho a matéria antes de começar, e que soma o tempo estudado em cada matéria.');
     if ($('#o-info').checked) feats.push('- Infográficos mostrando o progresso de cada matéria (porcentagem de desafios concluídos) e o tempo total estudado.');
     if ($('#o-meta').checked) feats.push(`- Uma meta diária de ${tempo} minutos de estudo, com barra de progresso.`);
@@ -615,27 +649,26 @@ footer .who b{color:var(--fg);font-size:18px}
     const quem = `um estudante do ${ano} do ensino médio integrado` + (curso ? `, do curso técnico em ${curso}` : '');
     return `Crie um painel de estudos interativo (dashboard) em uma única página web, para ${quem}.
 
-Divida o painel por matéria. Estas são as matérias e os assuntos de cada uma:
-${mats.join('\n') || '- (escolha pelo menos uma matéria)'}
+${conteudo}
 
 O painel deve ter:
 ${feats.join('\n') || '- (escolha pelo menos um recurso)'}
 
-Use um visual ${$('#b-estilo').value}, com uma cor diferente para cada matéria, e que funcione bem no celular e no computador. Salve o progresso no navegador para não perder ao recarregar a página. Escreva todos os textos em português.`;
+Use um visual ${$('#b-estilo').value}, com uma cor diferente para cada matéria, e que funcione bem no celular e no computador. Salve o progresso no navegador para não perder ao recarregar a página. Escreva todos os textos em português.${resumo}`;
   }
   function refresh(){ if(!edited) $('#b-out').value = build(); }
-  $('#builder').addEventListener('input', ()=>{ edited=false; refresh(); });
-  $('#builder').addEventListener('change', ()=>{ edited=false; refresh(); });
+  $('#builder').addEventListener('input', ()=>{ edited=false; fonteUI(); refresh(); });
+  $('#builder').addEventListener('change', ()=>{ edited=false; fonteUI(); refresh(); });
   $('#b-out').addEventListener('input', ()=> edited = true);
-  refresh();
+  fonteUI(); refresh();
 
   const FOLLOW = [
-    'Adicione um gráfico de pizza mostrando o tempo estudado em cada matéria.',
+    'Adicione mais 5 questões no mini-teste de cada assunto, um pouco mais difíceis.',
     'Adicione um modo escuro com um botão para alternar.',
     'Crie uma aba de revisão com 5 perguntas de múltipla escolha para cada matéria.',
     'Adicione um botão para zerar o progresso da semana.',
     'Deixe os botões maiores e mais fáceis de clicar no celular.',
-    'Mostre uma medalha quando eu completar todos os desafios de uma matéria.'
+    'Crie um modo revisão que mostra só os flashcards que eu marquei como errados.'
   ];
   $('#canvas-followups').innerHTML = FOLLOW.map((t,i)=>`
     <div class="prompt"><textarea id="fu-${i}" style="min-height:92px">${t}</textarea>
