@@ -71,6 +71,40 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .disk{position:relative;z-index:1;height:34px;border-radius:17px;margin-top:4px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:15px;color:#0d1017;font-weight:700;transition:transform .15s}
 .disk.lift{transform:translateY(-14px)}
 @media (prefers-reduced-motion:reduce){.boat,.disk{transition:none}}
+/* Robô */
+.robo-wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:760px){.robo-wrap{grid-template-columns:1fr}}
+.grid6{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;background:var(--line);padding:4px;border-radius:14px;aspect-ratio:1/1;max-width:440px;width:100%}
+.cell{background:#1d2433;border-radius:8px;display:grid;place-items:center;font-size:clamp(18px,4.5vw,32px);position:relative}
+.cell.wall{background:#5b4636}
+.cell.path{background:#23314a}
+.cell .dir{position:absolute;right:3px;bottom:1px;font-size:14px;color:var(--warn);font-family:var(--mono)}
+.cmds{display:flex;flex-wrap:wrap;gap:8px}
+.prog{display:flex;flex-wrap:wrap;gap:6px;min-height:52px;padding:10px;border-radius:12px;background:#0f141e;border:1px dashed var(--line)}
+.chip{font-family:var(--mono);font-size:14px;background:var(--line);border-radius:8px;padding:6px 9px}
+.chip.now{background:var(--warn);color:#0d1017}
+.chip.bad{background:var(--bad);color:#0d1017}
+.levels{display:flex;gap:6px;flex-wrap:wrap}
+/* Jarras */
+.jugs{display:flex;justify-content:center;align-items:flex-end;gap:clamp(24px,8vw,80px);min-height:280px;padding-top:10px}
+.jug{display:grid;justify-items:center;gap:8px}
+.jug .body{position:relative;width:110px;border:4px solid #cfd6e4;border-top:none;border-radius:0 0 18px 18px;overflow:hidden;background:#111722}
+.jug .liquid{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(#5b9dff,#2a66b0);transition:height .45s ease}
+.jug .marks{position:absolute;inset:0;display:flex;flex-direction:column-reverse}
+.jug .marks span{flex:1;border-top:1px dashed rgba(255,255,255,.18);font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.55);padding-left:4px}
+.jug .amt{font-family:var(--mono);font-size:22px;font-weight:700}
+.jug .name{color:var(--muted);font-size:15px}
+.acts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media (min-width:900px){.acts{grid-template-columns:repeat(3,minmax(0,1fr))}}
+/* Número */
+.guess{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.guess input{font:inherit;font-size:24px;width:130px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:#0f141e;color:var(--fg)}
+.range{position:relative;height:46px;border-radius:12px;background:#0f141e;overflow:hidden;border:1px solid var(--line)}
+.range .live{position:absolute;top:0;bottom:0;background:rgba(91,157,255,.35);transition:left .3s,width .3s}
+.range .lbl{position:absolute;inset:0;display:flex;justify-content:space-between;align-items:center;padding:0 12px;font-family:var(--mono);font-size:14px;color:var(--muted)}
+.big{font-family:var(--mono);font-size:clamp(28px,5vw,44px);font-weight:700}
+@media (prefers-reduced-motion:reduce){.jug .liquid,.range .live{transition:none}}
+
 </style>
 </head>
 <body>
@@ -82,6 +116,9 @@ button:disabled{opacity:.4;cursor:not-allowed}
     <div class="tabs" role="tablist">
       <button id="tab-rio" role="tab" aria-selected="true">1. Travessia do rio</button>
       <button id="tab-hanoi" role="tab" aria-selected="false">2. Torre de Hanói</button>
+      <button id="tab-robo" role="tab" aria-selected="false">3. Programe o robô</button>
+      <button id="tab-jarras" role="tab" aria-selected="false">4. Jarras de água</button>
+      <button id="tab-numero" role="tab" aria-selected="false">5. Adivinhe o número</button>
     </div>
   </header>
 
@@ -129,19 +166,101 @@ button:disabled{opacity:.4;cursor:not-allowed}
       <ol id="hanoi-log"><li class="empty">Nenhuma instrução ainda.</li></ol>
     </aside>
   </section>
+
+  <!-- ROBÔ -->
+  <section id="view-robo" class="game" hidden>
+    <div class="stage">
+      <p class="rules">Leve o <b>robô 🤖</b> até a <b>estrela ⭐</b> sem bater nas paredes. Aqui é diferente: primeiro você <b>escreve o programa inteiro</b>, depois clica em <b>Executar</b>. O robô faz exatamente o que você mandou, nem mais, nem menos.</p>
+      <div class="levels" id="robo-levels"></div>
+      <div class="robo-wrap">
+        <div class="grid6" id="robo-grid" aria-label="Tabuleiro do robô"></div>
+        <div style="display:grid;gap:12px;min-width:0">
+          <div class="cmds">
+            <button id="rb-f">⬆ Andar</button>
+            <button id="rb-l">↺ Virar à esquerda</button>
+            <button id="rb-r">↻ Virar à direita</button>
+          </div>
+          <div class="prog" id="robo-prog" aria-label="Programa"></div>
+          <div class="controls">
+            <button class="primary" id="rb-run">▶ Executar</button>
+            <button id="rb-back">Apagar último</button>
+            <button id="rb-clear">Limpar</button>
+          </div>
+        </div>
+      </div>
+      <div class="status" id="robo-status" aria-live="polite"></div>
+    </div>
+    <aside class="algo">
+      <h2>Programa do robô</h2>
+      <p>Cada comando é uma instrução. O computador lê de cima para baixo.</p>
+      <ol id="robo-log"><li class="empty">Nenhuma instrução ainda.</li></ol>
+    </aside>
+  </section>
+
+  <!-- JARRAS -->
+  <section id="view-jarras" class="game" hidden>
+    <div class="stage">
+      <p class="rules">Você tem uma jarra de <b>5 litros</b> e outra de <b>3 litros</b>, sem marcações, e uma torneira. Consiga <b>exatamente 4 litros</b> em uma das jarras. Dá para encher, esvaziar e despejar uma na outra até uma encher ou a outra esvaziar.</p>
+      <div class="jugs" id="jugs"></div>
+      <div class="acts">
+        <button data-j="fillA">Encher a de 5 L</button>
+        <button data-j="fillB">Encher a de 3 L</button>
+        <button data-j="AtoB">Despejar 5 L → 3 L</button>
+        <button data-j="emptyA">Esvaziar a de 5 L</button>
+        <button data-j="emptyB">Esvaziar a de 3 L</button>
+        <button data-j="BtoA">Despejar 3 L → 5 L</button>
+      </div>
+      <div class="controls">
+        <button id="jar-undo">Desfazer</button>
+        <button id="jar-reset">Recomeçar</button>
+        <button id="jar-sol">Mostrar solução</button>
+        <span class="counter" id="jar-count">0 passos · mínimo 6</span>
+      </div>
+      <div class="status" id="jar-status" aria-live="polite"></div>
+    </div>
+    <aside class="algo">
+      <h2>Algoritmo da turma</h2>
+      <p>Cada ação vira uma instrução.</p>
+      <ol id="jar-log"><li class="empty">Nenhuma instrução ainda.</li></ol>
+    </aside>
+  </section>
+
+  <!-- NÚMERO -->
+  <section id="view-numero" class="game" hidden>
+    <div class="stage">
+      <p class="rules">O computador pensou num número de <b>1 a 100</b>. A cada chute, ele diz se o número é <b>maior</b> ou <b>menor</b>. Quantas tentativas você precisa? Existe uma estratégia que <b>nunca passa de 7</b>. Descubra qual é.</p>
+      <div class="range" aria-hidden="true"><div class="live" id="num-live"></div><div class="lbl"><span id="num-lo">1</span><span id="num-hi">100</span></div></div>
+      <form class="guess" id="num-form">
+        <label for="num-in">Seu chute</label>
+        <input id="num-in" type="number" min="1" max="100" inputmode="numeric" autocomplete="off">
+        <button class="primary" type="submit" id="num-go">Chutar</button>
+        <button type="button" id="num-new">Novo número</button>
+        <button type="button" id="num-auto">Computador joga</button>
+        <span class="counter" id="num-count">0 tentativas</span>
+      </form>
+      <div class="big" id="num-msg" aria-live="polite"></div>
+      <div class="status" id="num-status" aria-live="polite"></div>
+    </div>
+    <aside class="algo">
+      <h2>Algoritmo da turma</h2>
+      <p>Cada chute e a resposta do computador.</p>
+      <ol id="num-log"><li class="empty">Nenhuma instrução ainda.</li></ol>
+    </aside>
+  </section>
 </div>
 
 <script>
 (function(){
   const $ = id => document.getElementById(id);
   // Tabs
-  const tabs = {rio:$('tab-rio'), hanoi:$('tab-hanoi')};
+  const TABS = ['rio','hanoi','robo','jarras','numero'];
+  const tabs = {}; TABS.forEach(k => tabs[k] = $('tab-'+k));
   function show(name){
     for (const k in tabs){ tabs[k].setAttribute('aria-selected', k===name); $('view-'+k).hidden = k!==name; }
   }
-  tabs.rio.onclick = () => show('rio');
-  tabs.hanoi.onclick = () => show('hanoi');
-  if (location.hash === '#hanoi') show('hanoi');
+  TABS.forEach(k => tabs[k].onclick = () => show(k));
+  function fromHash(){ const h = location.hash.replace('#',''); if (TABS.includes(h)) show(h); }
+  fromHash(); window.addEventListener('hashchange', fromHash);
 
   function renderLog(el, items){
     el.innerHTML = '';
@@ -274,9 +393,140 @@ button:disabled{opacity:.4;cursor:not-allowed}
   }
   $('hanoi-n').onchange=hInit; $('hanoi-undo').onclick=hUndo; $('hanoi-reset').onclick=hInit; $('hanoi-run').onclick=hRun;
 
+
+  /* ---------- ROBÔ ---------- */
+  const LEVELS = [
+    {s:[0,5,'E'], g:[4,5], w:[], min:4},
+    {s:[0,5,'E'], g:[5,0], w:[[3,5],[3,4],[3,3],[3,2]], min:12},
+    {s:[0,0,'E'], g:[5,5], w:[[2,0],[2,1],[2,2],[4,1],[4,2],[4,3],[4,4]], min:14}
+  ];
+  const DV = {E:[1,0],S:[0,1],W:[-1,0],N:[0,-1]}, ARROW = {E:'▶',S:'▼',W:'◀',N:'▲'};
+  const LEFT = {E:'N',N:'W',W:'S',S:'E'}, RIGHT = {E:'S',S:'W',W:'N',N:'E'};
+  const CMD = {F:'Andar para frente', L:'Virar à esquerda', R:'Virar à direita'};
+  const CHIP = {F:'⬆', L:'↺', R:'↻'};
+  let lvl=0, prog=[], rRun=false, rb, trail, nowIdx=-1, badIdx=-1;
+  function rbReset(){ const L=LEVELS[lvl]; rb={x:L.s[0], y:L.s[1], d:L.s[2]}; trail=new Set([L.s[0]+','+L.s[1]]); nowIdx=-1; badIdx=-1; }
+  function isWall(x,y){ return LEVELS[lvl].w.some(w=>w[0]===x && w[1]===y); }
+  function rbDraw(){
+    const L=LEVELS[lvl], g=$('robo-grid'); g.innerHTML='';
+    for(let y=0;y<6;y++) for(let x=0;x<6;x++){
+      const c=document.createElement('div'); c.className='cell';
+      if(isWall(x,y)) c.classList.add('wall');
+      else if(trail.has(x+','+y)) c.classList.add('path');
+      if(rb.x===x && rb.y===y){ c.innerHTML='<span aria-hidden="true">🤖</span><span class="dir"></span>'; c.querySelector('.dir').textContent=ARROW[rb.d]; c.setAttribute('aria-label','Robô virado para '+({E:'a direita',W:'a esquerda',N:'cima',S:'baixo'})[rb.d]); }
+      else if(L.g[0]===x && L.g[1]===y){ c.innerHTML='<span aria-hidden="true">⭐</span>'; c.setAttribute('aria-label','Estrela'); }
+      else if(isWall(x,y)) c.setAttribute('aria-label','Parede');
+      g.appendChild(c);
+    }
+    const p=$('robo-prog'); p.innerHTML='';
+    if(!prog.length){ p.innerHTML='<span class="empty" style="color:var(--muted);font-style:italic">Clique nos comandos para montar o programa.</span>'; }
+    prog.forEach((c,i)=>{ const s=document.createElement('span'); s.className='chip'+(i===nowIdx?' now':'')+(i===badIdx?' bad':''); s.textContent=(i+1)+'. '+CHIP[c]; s.title=CMD[c]; p.appendChild(s); });
+    renderLog($('robo-log'), prog.map((c,i)=>({text:CMD[c], err:i===badIdx})));
+    ['rb-f','rb-l','rb-r','rb-back','rb-clear','rb-run'].forEach(id=>$(id).disabled=rRun);
+    if(!rRun){ $('rb-back').disabled=!prog.length; $('rb-clear').disabled=!prog.length; $('rb-run').disabled=!prog.length; }
+    [...$('robo-levels').children].forEach((b,i)=>{ b.setAttribute('aria-selected', i===lvl); b.disabled=rRun; });
+  }
+  function rbAdd(c){ if(rRun || prog.length>=40) return; prog.push(c); rbReset(); setStatus('robo',''); rbDraw(); }
+  function rbRun(){
+    if(!prog.length) return;
+    rbReset(); rRun=true; setStatus('robo','Executando o programa, uma instrução por vez…','warn'); rbDraw();
+    let i=0;
+    const tick=()=>{
+      if(i>=prog.length){
+        rRun=false; nowIdx=-1; const L=LEVELS[lvl];
+        if(rb.x===L.g[0] && rb.y===L.g[1]) setStatus('robo', prog.length<=L.min ? `Chegou! ${prog.length} comandos, o menor programa possível.` : `Chegou com ${prog.length} comandos! Dá para fazer com ${L.min}?`, 'good');
+        else setStatus('robo','O programa acabou, mas o robô não chegou na estrela. Ajuste e execute de novo.','bad');
+        rbDraw(); return;
+      }
+      const c=prog[i]; nowIdx=i;
+      if(c==='L') rb.d=LEFT[rb.d];
+      else if(c==='R') rb.d=RIGHT[rb.d];
+      else { const nx=rb.x+DV[rb.d][0], ny=rb.y+DV[rb.d][1];
+        if(nx<0||ny<0||nx>5||ny>5||isWall(nx,ny)){ rRun=false; badIdx=i; nowIdx=-1; setStatus('robo',`Instrução ${i+1}: o robô bateu! O computador não adivinha. Corrija o programa.`,'bad'); rbDraw(); return; }
+        rb.x=nx; rb.y=ny; trail.add(nx+','+ny); }
+      rbDraw(); i++; setTimeout(tick, 450);
+    };
+    setTimeout(tick, 300);
+  }
+  $('robo-levels').innerHTML = LEVELS.map((_,i)=>`<button type="button" role="tab" aria-selected="${i===0}">Fase ${i+1}</button>`).join('');
+  [...$('robo-levels').children].forEach((b,i)=> b.onclick=()=>{ if(rRun) return; lvl=i; prog=[]; rbReset(); setStatus('robo',''); rbDraw(); });
+  $('rb-f').onclick=()=>rbAdd('F'); $('rb-l').onclick=()=>rbAdd('L'); $('rb-r').onclick=()=>rbAdd('R');
+  $('rb-back').onclick=()=>{ if(rRun) return; prog.pop(); rbReset(); setStatus('robo',''); rbDraw(); };
+  $('rb-clear').onclick=()=>{ if(rRun) return; prog=[]; rbReset(); setStatus('robo',''); rbDraw(); };
+  $('rb-run').onclick=rbRun;
+
+  /* ---------- JARRAS ---------- */
+  const CAP={a:5,b:3};
+  const JTXT={fillA:'Encher a jarra de 5 L', fillB:'Encher a jarra de 3 L', emptyA:'Esvaziar a jarra de 5 L', emptyB:'Esvaziar a jarra de 3 L', AtoB:'Despejar a de 5 L na de 3 L', BtoA:'Despejar a de 3 L na de 5 L'};
+  let jar, jHist, jLog, jDone, jAuto=false;
+  function jInit(){ jar={a:0,b:0}; jHist=[]; jLog=[]; jDone=false; setStatus('jar',''); jDraw(); }
+  function jApply(s,op){ const n={a:s.a,b:s.b}; let t;
+    if(op==='fillA') n.a=5; else if(op==='fillB') n.b=3; else if(op==='emptyA') n.a=0; else if(op==='emptyB') n.b=0;
+    else if(op==='AtoB'){ t=Math.min(n.a,3-n.b); n.a-=t; n.b+=t; } else if(op==='BtoA'){ t=Math.min(n.b,5-n.a); n.b-=t; n.a+=t; }
+    return n; }
+  function jDraw(){
+    const box=$('jugs'); box.innerHTML='';
+    [['a','Jarra de 5 L'],['b','Jarra de 3 L']].forEach(([k,name])=>{
+      const cap=CAP[k], d=document.createElement('div'); d.className='jug';
+      d.innerHTML=`<div class="amt">${jar[k]} L</div><div class="body" style="height:${cap*44}px"><div class="liquid" style="height:${jar[k]/cap*100}%"></div><div class="marks">${Array.from({length:cap},(_,i)=>`<span>${i+1}</span>`).join('')}</div></div><div class="name">${name}</div>`;
+      d.querySelector('.body').setAttribute('aria-label',`${name}: ${jar[k]} litros`);
+      box.appendChild(d);
+    });
+    $('jar-count').textContent=`${jHist.length} ${jHist.length===1?'passo':'passos'} · mínimo 6`;
+    renderLog($('jar-log'), jLog);
+    document.querySelectorAll('[data-j]').forEach(b=>b.disabled=jDone||jAuto);
+    $('jar-undo').disabled=jAuto||!jHist.length; $('jar-reset').disabled=jAuto; $('jar-sol').disabled=jAuto;
+  }
+  function jDo(op, quiet){
+    if(jDone) return;
+    const n=jApply(jar,op);
+    if(n.a===jar.a && n.b===jar.b){ if(!quiet) setStatus('jar','Essa ação não muda nada. Tente outra.','warn'); return; }
+    jHist.push(jar); jar=n; jLog.push({text:`${JTXT[op]} → (${n.a} L, ${n.b} L)`});
+    if(jar.a===4 || jar.b===4){ jDone=true; setStatus('jar', jHist.length<=6 ? `Exatamente 4 litros em ${jHist.length} passos, o mínimo possível!` : `Exatamente 4 litros em ${jHist.length} passos! Dá para fazer em 6?`, 'good'); }
+    else if(!quiet) setStatus('jar','');
+    jDraw();
+  }
+  function jUndo(){ if(!jHist.length) return; jar=jHist.pop(); jLog.pop(); jDone=false; setStatus('jar',''); jDraw(); }
+  function jSol(){
+    jInit(); jAuto=true; jDraw(); const steps=['fillA','AtoB','emptyB','AtoB','fillA','AtoB']; let i=0;
+    const tick=()=>{ if(i>=steps.length){ jAuto=false; jDraw(); return; } jDo(steps[i++], true); setTimeout(tick, 900); };
+    setTimeout(tick, 400);
+  }
+  document.querySelectorAll('[data-j]').forEach(b=>b.onclick=()=>jDo(b.dataset.j));
+  $('jar-undo').onclick=jUndo; $('jar-reset').onclick=jInit; $('jar-sol').onclick=jSol;
+
+  /* ---------- NÚMERO ---------- */
+  let secret, lo, hi, tries, nLog, nDone, nAuto=false;
+  function nInit(){ secret=1+Math.floor(Math.random()*100); lo=1; hi=100; tries=0; nLog=[]; nDone=false; $('num-msg').textContent=''; setStatus('num',''); $('num-in').value=''; nDraw(); }
+  function nDraw(){
+    $('num-live').style.left=((lo-1))+'%'; $('num-live').style.width=Math.max(0,(hi-lo+1))+'%';
+    $('num-lo').textContent=lo; $('num-hi').textContent=hi;
+    $('num-count').textContent=`${tries} ${tries===1?'tentativa':'tentativas'}`;
+    renderLog($('num-log'), nLog);
+    $('num-in').disabled=nDone||nAuto; $('num-go').disabled=nDone||nAuto; $('num-new').disabled=nAuto; $('num-auto').disabled=nAuto;
+  }
+  function nGuess(v, auto){
+    if(nDone) return;
+    if(!Number.isInteger(v) || v<1 || v>100){ setStatus('num','Digite um número inteiro de 1 a 100.','warn'); return; }
+    tries++;
+    const fora = v<lo || v>hi;
+    if(v===secret){ nDone=true; $('num-msg').textContent=`🎉 Era ${v}!`; nLog.push({text:`Tentativa ${tries}: ${v} → acertou!`});
+      setStatus('num', auto ? `O computador acertou em ${tries} tentativas usando busca binária: sempre chutar o meio do que sobrou.` : (tries<=7 ? `Acertou em ${tries} tentativas. Ótima estratégia!` : `Acertou em ${tries} tentativas. Dica: chute sempre o meio do intervalo que sobrou.`), 'good'); }
+    else if(v<secret){ $('num-msg').textContent=`É maior que ${v}`; lo=Math.max(lo,v+1); nLog.push({text:`Tentativa ${tries}: ${v} → é maior`}); setStatus('num', fora && !auto ? 'Esse número já estava descartado! Olhe a faixa azul: o número está nela.' : '', fora && !auto ? 'warn' : ''); }
+    else { $('num-msg').textContent=`É menor que ${v}`; hi=Math.min(hi,v-1); nLog.push({text:`Tentativa ${tries}: ${v} → é menor`}); setStatus('num', fora && !auto ? 'Esse número já estava descartado! Olhe a faixa azul: o número está nela.' : '', fora && !auto ? 'warn' : ''); }
+    nDraw();
+  }
+  $('num-form').addEventListener('submit', e=>{ e.preventDefault(); nGuess(Number($('num-in').value)); $('num-in').select(); });
+  $('num-new').onclick=nInit;
+  $('num-auto').onclick=()=>{
+    nInit(); nAuto=true; nDraw(); setStatus('num','O computador vai jogar sempre chutando o meio…','warn');
+    const tick=()=>{ if(nDone){ nAuto=false; nDraw(); return; } const g=Math.floor((lo+hi)/2); $('num-in').value=g; nGuess(g,true); setTimeout(tick, 1100); };
+    setTimeout(tick, 600);
+  };
+
   function setStatus(which,msg,kind){ const el=$(which+'-status'); el.textContent=msg; el.className='status'+(kind?' '+kind:''); }
 
-  rioInit(); hInit();
+  rioInit(); hInit(); rbReset(); rbDraw(); jInit(); nInit();
 })();
 </script>
 
